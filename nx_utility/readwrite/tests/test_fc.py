@@ -6,7 +6,6 @@ import os,tempfile,shutil
 from nose import SkipTest
 from nose.tools import assert_equal
 
-from esrimock import *
 from nx_utility import read_fc
 import networkx as nx
 
@@ -23,8 +22,8 @@ class TestFc(object):
     def setupClass(cls):
         global gp
         try:
-            arc = arcgisscripting()
-            gp = arc.create(9000)
+            import arcgisscripting as arc
+            gp = arc.create(9.3)
         except ImportError:
             raise SkipTest('gp mock not available.')
             
@@ -34,12 +33,10 @@ class TestFc(object):
         self.nodes = di.nodes()
         
     def testload_fcnodes(self):
-        gp.SearchCursor = lambda x: SCursorMock(self.nodes, "point")
         G = read_fc("C:\\somefakedb.mdb\\fakenodes", gp)
         assert self.sequence_equal(self.nodes, G.nodes())
         
     def testload_fcedges(self):
-        gp.SearchCursor = lambda x: SCursorMock(self.lines, "polyline")
         G = read_fc("C:\\somefakedb.mdb\\fakenodes", gp)
         assert self.sequence_equal(self.lines, G.edges())
         
