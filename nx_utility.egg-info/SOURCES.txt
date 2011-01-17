@@ -1,0 +1,9 @@
+setup.cfg
+setup.py
+nx_utility/__init__.py
+nx_utility.egg-info/PKG-INFO
+nx_utility.egg-info/SOURCES.txt
+nx_utility.egg-info/dependency_links.txt
+nx_utility.egg-info/entry_points.txt
+nx_utility.egg-info/not-zip-safe
+nx_utility.egg-info/top_level.txt

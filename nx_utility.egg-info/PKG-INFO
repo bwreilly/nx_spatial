@@ -1,0 +1,11 @@
+Metadata-Version: 1.0
+Name: nx-utility
+Version: 0.1dev
+Summary: Additional GIS focused functions for networkx graphs.
+Home-page: UNKNOWN
+Author: Ben Reilly
+Author-email: gallipoli@gmail.com
+License: UNKNOWN
+Description: UNKNOWN
+Keywords: spatial,gis,topology,networkx
+Platform: UNKNOWN
