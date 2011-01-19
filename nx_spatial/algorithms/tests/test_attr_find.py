@@ -3,7 +3,7 @@ from nose import SkipTest
 from nose.tools import assert_equal
 
 import networkx as nx
-from nx_utility import attr_find
+from nx_spatial import attr_find
 
 class TestAttr_Find(object):   
     def setUp(self):

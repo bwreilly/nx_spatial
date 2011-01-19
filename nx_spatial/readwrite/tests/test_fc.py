@@ -6,7 +6,7 @@ import os,tempfile,shutil
 from nose import SkipTest
 from nose.tools import assert_equal
 
-from nx_utility import read_fc
+from nx_spatial import read_fc
 import networkx as nx
 
 def buildtestnet():

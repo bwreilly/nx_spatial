@@ -25,7 +25,7 @@ __author__ = """Ben Reilly (benwreilly@gmail.com)"""
 __all__ = ['read_fc']
 
 import networkx as nx
-import nx_utility as nu
+import nx_spatial as nu
 
 def read_fc(path, gp):
     """Generates a networkx.DiGraph from a feature class. 

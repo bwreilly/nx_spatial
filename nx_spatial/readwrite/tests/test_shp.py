@@ -7,7 +7,7 @@ from nose import SkipTest
 from nose.tools import assert_equal
 
 import networkx as nx
-import nx_utility as nu
+import nx_spatial as nu
 
 class TestShp(object):
     @classmethod
