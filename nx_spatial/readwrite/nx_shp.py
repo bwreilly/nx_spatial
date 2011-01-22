@@ -27,7 +27,7 @@ __all__ = ['read_shp']
 
 import networkx as nx
 
-def read_shp(path):
+def read_shp(path, tolerance=0):
     """Generates a networkx.DiGraph from shapefiles. 
 
     "The Esri Shapefile or simply a shapefile is a popular geospatial vector
@@ -37,6 +37,9 @@ def read_shp(path):
     ----------
     path : file or string
        File, directory, or filename to read.
+    tolerance : number
+        Spatial tolerance of network objects. Nodes within this distance will
+        be assumed to be the same.
 
     Returns
     -------
@@ -44,7 +47,7 @@ def read_shp(path):
 
     Examples
     --------
-    >>> G=nx.read_shp('test.shp')
+    G=nx.read_shp('test.shp')
     
     References
     ----------
@@ -81,7 +84,6 @@ def read_shp(path):
             lyr = shp.GetLayerByIndex(lyrindex)
             flds = [x.GetName() for x in lyr.schema]
             addlyr(lyr, flds)
-    
     return net
     
 # fixture for nose tests
@@ -91,3 +93,4 @@ def setup_module(module):
         import ogr
     except:
         raise SkipTest("OGR not available")
+

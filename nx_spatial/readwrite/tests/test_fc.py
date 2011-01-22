@@ -25,19 +25,35 @@ class TestFc(object):
             import arcgisscripting as arc
             gp = arc.create(9.3)
         except ImportError:
-            raise SkipTest('gp mock not available.')
+            raise SkipTest('ESRI geoprocessor not available.')
             
     def setUp(self):
-        di = buildtestnet()
+        gdbname = "tempgdb"
+        gdbpath = os.path.join(tempfile.gettempdir(), gdbname)
+        gp.CreateFileGDB_management(tempfile.gettempdir(), gdbname)
+        gp.CreateFeatureclass_management(gdbpath, "lines")
+        self.testfc = os.path.join(gdbpath, "lines")
+        self.paths = (  [(1.0, 1.0), (2.0, 2.0)],
+                        [(2.0, 2.0), (3.0, 3.0)],
+                        [(0.9, 0.9), (4.0, 2.0)]
+                    )
+        di = nx.DiGraph()
+        rows = gp.InsertCursor(os.path.join(gdbpath, "lines"))
+        for path in self.paths:
+            row = rows.newRow()
+            di.add_path(path)
+            lineArray = gp.CreateObject("Array")
+            for xy in path:
+                pnt = gp.CreateObject("Point")
+                lineArray.add(xy)
+            row.Shape = lineArray
+            rows.InsertRow(row)
         self.lines = di.edges()
         self.nodes = di.nodes()
         
     def testload_fcnodes(self):
-        G = read_fc("C:\\somefakedb.mdb\\fakenodes", gp)
+        G = read_fc(self.testfc, gp)
         assert self.sequence_equal(self.nodes, G.nodes())
-        
-    def testload_fcedges(self):
-        G = read_fc("C:\\somefakedb.mdb\\fakenodes", gp)
         assert self.sequence_equal(self.lines, G.edges())
         
     def sequence_equal(self, seq1, seq2, msg=None):

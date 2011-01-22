@@ -23,11 +23,11 @@ class TestShp(object):
         shppath = os.path.join(tempfile.gettempdir(),'tmpshp.shp')
         if os.path.exists(shppath): drv.DeleteDataSource(shppath)      
         shp = drv.CreateDataSource(shppath)
-        lyr = shp.CreateLayer( "edges", None, ogr.wkbLineString)
+        lyr = shp.CreateLayer("edges", None, ogr.wkbLineString)
         
-        self.paths = (  [(7.0, 1.0), (1.0, 1.0)],
+        self.paths = (  [(1.0, 1.0), (2.0, 2.0)],
                         [(2.0, 2.0), (3.0, 3.0)],
-                        [(4.0, 1.0), (2.0, 2.0)]
+                        [(0.9, 0.9), (4.0, 2.0)]
                     )
         for path in self.paths:
             feat = ogr.Feature(lyr.GetLayerDefn())
@@ -49,4 +49,5 @@ class TestShp(object):
         self.drv.DeleteDataSource(self.shppath)
         
 if __name__ == '__main__':
+    import unittest
     unittest.main()
