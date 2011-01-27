@@ -1,6 +1,6 @@
 """
 *********
-Shapefile
+Feature Class
 *********
 
 Generates a networkx.DiGraph from point and line feature classes.
@@ -8,12 +8,6 @@ Generates a networkx.DiGraph from point and line feature classes.
 Point geometries are translated into nodes, lines into edges. Coordinate tuples
 are used as keys. Attributes are preserved, line geometries are simplified into
 start and end coordinates. Accepts a single feature class.
-
-"The Esri Shapefile or simply a shapefile is a popular geospatial vector
-data format for geographic information systems software. It is developed
-and regulated by Esri as a (mostly) open specification for data
-interoperability among Esri and other software products."
-See http://en.wikipedia.org/wiki/Shapefile for additional information.
 
 """
 __author__ = """Ben Reilly (benwreilly@gmail.com)"""
@@ -37,6 +31,7 @@ def read_fc(path, gp):
     ----------
     path : file or string
        File, directory, or filename to read.
+    gp : ESRI geoprocessor object
 
     Returns
     -------

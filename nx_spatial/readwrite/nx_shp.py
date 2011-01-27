@@ -37,9 +37,6 @@ def read_shp(path, tolerance=0):
     ----------
     path : file or string
        File, directory, or filename to read.
-    tolerance : number
-        Spatial tolerance of network objects. Nodes within this distance will
-        be assumed to be the same.
 
     Returns
     -------
