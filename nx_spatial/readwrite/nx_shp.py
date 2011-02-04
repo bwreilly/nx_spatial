@@ -27,7 +27,7 @@ __all__ = ['read_shp']
 
 import networkx as nx
 
-def read_shp(path, tolerance=0):
+def read_shp(path):
     """Generates a networkx.DiGraph from shapefiles. 
 
     "The Esri Shapefile or simply a shapefile is a popular geospatial vector
