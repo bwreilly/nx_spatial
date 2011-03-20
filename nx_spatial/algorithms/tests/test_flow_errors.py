@@ -29,12 +29,17 @@ class TestFlow_Errors(object):
         expected = [badline1, badline2]
         actual = flow_errors(self.di, src)
         assert self.sequence_equal(actual, expected)
+
+    def testflow_errors_single_edge(self):
+        src = ((7.0, 7.0))
+        badline1 = ((6,3), (7,7))
+        expected = [badline1]
+        actual = flow_errors(self.di, src)
+        assert self.sequence_equal(actual, expected)
     
     def sequence_equal(self, seq1, seq2, msg=None):
         msg = str(seq1) + "!=" + str(seq2)
         seq1.sort()
         seq2.sort()
         return seq1 == seq2
-        
-if __name__ == '__main__':
-    unittest.main()
+
