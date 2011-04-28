@@ -68,6 +68,9 @@ def read_shp(path):
             g = f.geometry()
             attributes = dict(zip(fields, flddata))
             attributes["ShpName"] = lyr.GetName()
+            attributes["Wkb"] = g.ExportToWkb()
+            attributes["Wkt"] = g.ExportToWkt()
+            attributes["Json"] = g.ExportToJson()
             if g.GetGeometryType() == 1: #point
                 net.add_node((g.GetPoint_2D(0)), attributes)
             if g.GetGeometryType() == 2: #linestring
