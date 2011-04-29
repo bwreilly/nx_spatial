@@ -21,9 +21,8 @@ __author__ = """Ben Reilly (benwreilly@gmail.com)"""
 #    Copyright (C) 2004-2010 by
 #    Ben Reilly <benwreilly@gmail.com>
 #    All rights reserved.
-#    BSD license.
 
-__all__ = ['read_shp']
+__all__ = ['read_shp', 'write_shp']
 
 import networkx as nx
 
@@ -53,7 +52,7 @@ def read_shp(path):
     try:
         from osgeo import ogr
     except ImportError:
-        raise ImportError("read_shp() requires OGR: http://www.gdal.org/")
+        raise ImportError("read_shp requires OGR: http://www.gdal.org/")
     
     net = nx.DiGraph()
     
@@ -86,6 +85,16 @@ def read_shp(path):
             addlyr(lyr, flds)
     return net
     
+def write_shp(G, outdir):
+    try:
+        from osgeo import ogr
+    except ImportError:
+        raise ImportError("write_shp requires OGR: http://www.gdal.org/")
+
+    drv = ogr.GetDriverByName("ESRI Shapefile")
+    shpdir = drv.CreateDataSource(outdir)
+    shpdir.CreateLayer("nodes.shp")
+
 # fixture for nose tests
 def setup_module(module):
     from nose import SkipTest
