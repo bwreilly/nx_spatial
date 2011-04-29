@@ -40,7 +40,6 @@ class TestShp(object):
         self.shppath = shppath
         self.testdir = testdir
         self.drv = drv
-        self.G = None
 
     def testload(self):
         expected = nx.DiGraph()
@@ -50,18 +49,31 @@ class TestShp(object):
         assert_equal(sorted(expected.edges()), sorted(G.edges()))
     
     def testexport(self):
-        expectednodes = (
-            ogr.Geometry(type=ogr.wkbPoint, wkt="POINT(1 1)"),
-            ogr.Geometry(type=ogr.wkbPoint, wkt="POINT(2 2)"),
-            ogr.Geometry(type=ogr.wkbPoint, wkt="POINT(3 3)"),
-            ogr.Geometry(type=ogr.wkbPoint, wkt="POINT(0.9 0.9)"),
-            ogr.Geometry(type=ogr.wkbPoint, wkt="POINT(4 2)")
+        # expectednodes = (
+        #     ogr.Geometry(type=ogr.wkbPoint, wkt="POINT(1 1)"),
+        #     ogr.Geometry(type=ogr.wkbPoint, wkt="POINT(2 2)"),
+        #     ogr.Geometry(type=ogr.wkbPoint, wkt="POINT(3 3)"),
+        #     ogr.Geometry(type=ogr.wkbPoint, wkt="POINT(0.9 0.9)"),
+        #     ogr.Geometry(type=ogr.wkbPoint, wkt="POINT(4 2)")
+        # )
+        expectedwkt = (
+            "POINT (1 1)",
+            "POINT (2 2)",
+            "POINT (3 3)",
+            "POINT (0.9 0.9)",
+            "POINT (4 2)"
         )
         tpath = os.path.join(tempfile.gettempdir(),'shpdir')
-        nu.write_shp(self.G, tpath)
+        G = nu.read_shp(self.shppath)
+        nu.write_shp(G, tpath)
         shpdir = ogr.Open(tpath)
         nodes = shpdir.GetLayerByName("nodes")
-        
+        feature = nodes.GetNextFeature()
+        actualwkt = []
+        while feature:
+            actualwkt.append(feature.GetGeometryRef().ExportToWkt())
+            feature = nodes.GetNextFeature()
+        assert_equal(sorted(expectedwkt), sorted(actualwkt))
 
     def tearDown(self):
         self.drv.DeleteDataSource(self.shppath)

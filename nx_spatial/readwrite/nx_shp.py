@@ -93,8 +93,17 @@ def write_shp(G, outdir):
 
     drv = ogr.GetDriverByName("ESRI Shapefile")
     shpdir = drv.CreateDataSource(outdir)
-    shpdir.CreateLayer("nodes.shp")
-
+    nodes = shpdir.CreateLayer("nodes", None, ogr.wkbPoint)
+    edges = shpdir.CreateLayer("edges", None, ogr.wkbLineString)
+    for nd in G.nodes():
+        geom = ogr.Geometry(ogr.wkbPoint)
+        geom.SetPoint(0, *nd)
+        defn = ogr.FeatureDefn()
+        feature = ogr.Feature(defn)
+        feature.SetGeometry(geom)
+        nodes.CreateFeature(feature)
+        feature.Destroy()
+    
 # fixture for nose tests
 def setup_module(module):
     from nose import SkipTest
