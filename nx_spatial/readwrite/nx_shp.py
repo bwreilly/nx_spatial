@@ -67,12 +67,12 @@ def read_shp(path):
             g = f.geometry()
             attributes = dict(zip(fields, flddata))
             attributes["ShpName"] = lyr.GetName()
-            attributes["Wkb"] = g.ExportToWkb()
-            attributes["Wkt"] = g.ExportToWkt()
-            attributes["Json"] = g.ExportToJson()
             if g.GetGeometryType() == 1: #point
                 net.add_node((g.GetPoint_2D(0)), attributes)
             if g.GetGeometryType() == 2: #linestring
+                attributes["Wkb"] = g.ExportToWkb()
+                attributes["Wkt"] = g.ExportToWkt()
+                attributes["Json"] = g.ExportToJson()
                 last = g.GetPointCount() - 1
                 net.add_edge(g.GetPoint_2D(0), g.GetPoint_2D(last), attributes)
                 
@@ -86,23 +86,62 @@ def read_shp(path):
     return net
     
 def write_shp(G, outdir):
+    """Writes a networkx.DiGraph to two shapefiles, edges and nodes. 
+
+    "The Esri Shapefile or simply a shapefile is a popular geospatial vector
+    data format for geographic information systems software [1]_."
+
+    Parameters
+    ----------
+    outdir : directory path
+       Output directory for the two shapefiles.
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    G=nx.write_shp(digraph, '~/shapefiles')
+    
+    References
+    ----------
+    .. [1] http://en.wikipedia.org/wiki/Shapefile
+    """
     try:
         from osgeo import ogr
     except ImportError:
         raise ImportError("write_shp requires OGR: http://www.gdal.org/")
 
+    def netgeometry(key, data):
+        if data.has_key('Wkb'):
+            geom = ogr.CreateGeometryFromWkb(data['Wkb'])
+        elif data.has_key('Wkt'):
+            geom = ogr.CreateGeometryFromWkt(data['Wkt'])
+        else:
+            geom = ogr.Geometry(ogr.wkbPoint)
+            geom.SetPoint(0, *key)
+        return geom
+
     drv = ogr.GetDriverByName("ESRI Shapefile")
     shpdir = drv.CreateDataSource(outdir)
     nodes = shpdir.CreateLayer("nodes", None, ogr.wkbPoint)
-    edges = shpdir.CreateLayer("edges", None, ogr.wkbLineString)
-    for nd in G.nodes():
-        geom = ogr.Geometry(ogr.wkbPoint)
-        geom.SetPoint(0, *nd)
-        defn = ogr.FeatureDefn()
-        feature = ogr.Feature(defn)
-        feature.SetGeometry(geom)
+    for n in G.node:
+        attribs = G.node[n].values() or [{}]
+        g = netgeometry(n, attribs[0])
+        feature = ogr.Feature(nodes.GetLayerDefn())
+        feature.SetGeometry(g)
         nodes.CreateFeature(feature)
         feature.Destroy()
+    edges = shpdir.CreateLayer("edges", None, ogr.wkbLineString)
+    for e in G.edges():
+        attribs = G.get_edge_data(*e)
+        g = netgeometry(e, attribs)
+        feature = ogr.Feature(edges.GetLayerDefn())
+        feature.SetGeometry(g)
+        edges.CreateFeature(feature)
+        feature.Destroy()
+    nodes, edges = None, None
     
 # fixture for nose tests
 def setup_module(module):
