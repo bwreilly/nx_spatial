@@ -26,7 +26,7 @@ class TestShp(object):
         if os.path.exists(shppath): drv.DeleteDataSource(shppath)      
         shp = drv.CreateDataSource(shppath)
         lyr = shp.CreateLayer("edges", None, ogr.wkbLineString)
-        
+        self.names = ('a','b','c','d','e')
         self.paths = (  [(1.0, 1.0), (2.0, 2.0)],
                         [(2.0, 2.0), (3.0, 3.0)],
                         [(0.9, 0.9), (4.0, 2.0)]
@@ -48,15 +48,14 @@ class TestShp(object):
         assert_equal(sorted(expected.node), sorted(G.node))
         assert_equal(sorted(expected.edges()), sorted(G.edges()))
     
-    def testexport(self):
-        def testlyr(lyr, expected):
+    def test_geometryexport(self):
+        def testgeom(lyr, expected):
             feature = lyr.GetNextFeature()
             actualwkt = []
             while feature:
                 actualwkt.append(feature.GetGeometryRef().ExportToWkt())
                 feature = lyr.GetNextFeature()
             assert_equal(sorted(expected), sorted(actualwkt))
-        
         expectedpoints = (
             "POINT (1 1)",
             "POINT (2 2)",
@@ -69,13 +68,27 @@ class TestShp(object):
             "LINESTRING (2 2,3 3)",
             "LINESTRING (0.9 0.9,4 2)"
         )
-        
         tpath = os.path.join(tempfile.gettempdir(),'shpdir')
         G = nu.read_shp(self.shppath)
         nu.write_shp(G, tpath)
         shpdir = ogr.Open(tpath)
-        testlyr(shpdir.GetLayerByName("nodes"), expectedpoints)
-        testlyr(shpdir.GetLayerByName("edges"), expectedlines)
+        testgeom(shpdir.GetLayerByName("nodes"), expectedpoints)
+        testgeom(shpdir.GetLayerByName("edges"), expectedlines)
+    
+    def test_attributeexport(self):
+        def testattributes(lyr, expected):
+            feature = lyr.GetNextFeature()
+            actualvalues = []
+            while feature:
+                actualvalues.append(feature.GetGeometryRef().ExportToWkt())
+                feature = lyr.GetNextFeature()
+            assert_equal(sorted(expected), sorted(actualvalues))
+
+        tpath = os.path.join(tempfile.gettempdir(),'shpdir')
+        G = nu.read_shp(self.shppath)
+        nu.write_shp(G, tpath)
+        shpdir = ogr.Open(tpath)
+        nodes = shpdir.GetLayerByName("nodes")
 
     def tearDown(self):
         self.drv.DeleteDataSource(self.shppath)

@@ -118,31 +118,37 @@ def write_shp(G, outdir):
             geom = ogr.CreateGeometryFromWkb(data['Wkb'])
         elif data.has_key('Wkt'):
             geom = ogr.CreateGeometryFromWkt(data['Wkt'])
+        elif type(key[0]) == 'tuple': # edge keys are packed tuples
+            geom = ogr.Geometry(ogr.wkbLineString)
+            _from, _to = key[0], key[1]
+            geom.SetPoint(0, *_from)
+            geom.SetPoint(1, *_to)
         else:
             geom = ogr.Geometry(ogr.wkbPoint)
             geom.SetPoint(0, *key)
         return geom
 
+    def create_feature(geometry, lyr):
+        feature = ogr.Feature(lyr.GetLayerDefn())
+        feature.SetGeometry(g)
+        lyr.CreateFeature(feature)
+        feature.Destroy()
+
     drv = ogr.GetDriverByName("ESRI Shapefile")
     shpdir = drv.CreateDataSource(outdir)
     nodes = shpdir.CreateLayer("nodes", None, ogr.wkbPoint)
-    for n in G.node:
-        attribs = G.node[n].values() or [{}]
-        g = netgeometry(n, attribs[0])
-        feature = ogr.Feature(nodes.GetLayerDefn())
-        feature.SetGeometry(g)
-        nodes.CreateFeature(feature)
-        feature.Destroy()
+    for n in G:
+        data = G.node[n].values() or [{}]
+        g = netgeometry(n, data[0])
+        create_feature(g, nodes)
     edges = shpdir.CreateLayer("edges", None, ogr.wkbLineString)
     for e in G.edges():
-        attribs = G.get_edge_data(*e)
-        g = netgeometry(e, attribs)
-        feature = ogr.Feature(edges.GetLayerDefn())
-        feature.SetGeometry(g)
-        edges.CreateFeature(feature)
-        feature.Destroy()
+        data = G.get_edge_data(*e)
+        g = netgeometry(e, data)
+        create_feature(g, edges)
+        
     nodes, edges = None, None
-    
+
 # fixture for nose tests
 def setup_module(module):
     from nose import SkipTest
