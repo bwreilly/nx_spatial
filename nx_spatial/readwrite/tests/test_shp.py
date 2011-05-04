@@ -41,7 +41,7 @@ class TestShp(object):
         
         shp = drv.CreateDataSource(shppath)
         lyr = createlayer(shp)
-        self.names = ('a','b','c','d','e')
+        self.names = ['a','b','c']  #edgenames
         self.paths = (  [(1.0, 1.0), (2.0, 2.0)],
                         [(2.0, 2.0), (3.0, 3.0)],
                         [(0.9, 0.9), (4.0, 2.0)]
@@ -63,6 +63,8 @@ class TestShp(object):
         G = nu.read_shp(self.shppath)
         assert_equal(sorted(expected.node), sorted(G.node))
         assert_equal(sorted(expected.edges()), sorted(G.edges()))
+        names = [G.get_edge_data(s,e)['Name'] for s,e in G.edges()]
+        assert_equal(self.names, sorted(names))
     
     def test_geometryexport(self):
         def testgeom(lyr, expected):
