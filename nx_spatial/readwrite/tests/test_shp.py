@@ -17,25 +17,41 @@ class TestShp(object):
             from osgeo import ogr
         except ImportError:
             raise SkipTest('ogr not available.')
+
+    def deletetmp(self, drv, *paths):
+        for p in paths:
+            if os.path.exists(p): drv.DeleteDataSource(p)
             
     def setUp(self):
+
+        def createlayer(driver):
+            lyr = shp.CreateLayer("edges", None, ogr.wkbLineString)
+            namedef = ogr.FieldDefn("Name", ogr.OFTString)
+            namedef.SetWidth(32)
+            lyr.CreateField(namedef)
+            return lyr
+
         drv = ogr.GetDriverByName("ESRI Shapefile")
+
         testdir = os.path.join(tempfile.gettempdir(),'shpdir')
-        os.mkdir(testdir)
         shppath = os.path.join(tempfile.gettempdir(),'tmpshp.shp')
-        if os.path.exists(shppath): drv.DeleteDataSource(shppath)      
+
+        self.deletetmp(drv, testdir, shppath)
+        os.mkdir(testdir)
+        
         shp = drv.CreateDataSource(shppath)
-        lyr = shp.CreateLayer("edges", None, ogr.wkbLineString)
+        lyr = createlayer(shp)
         self.names = ('a','b','c','d','e')
         self.paths = (  [(1.0, 1.0), (2.0, 2.0)],
                         [(2.0, 2.0), (3.0, 3.0)],
                         [(0.9, 0.9), (4.0, 2.0)]
                     )
-        for path in self.paths:
+        for path,name in zip(self.paths, self.names):
             feat = ogr.Feature(lyr.GetLayerDefn())
             g = ogr.Geometry(ogr.wkbLineString)
             map(lambda xy: g.AddPoint_2D(*xy), path)
             feat.SetGeometry(g)
+            feat.SetField("Name", name)
             lyr.CreateFeature(feat)
         self.shppath = shppath
         self.testdir = testdir
@@ -89,11 +105,10 @@ class TestShp(object):
         nu.write_shp(G, tpath)
         shpdir = ogr.Open(tpath)
         nodes = shpdir.GetLayerByName("nodes")
-
+    
     def tearDown(self):
-        self.drv.DeleteDataSource(self.shppath)
-        self.drv.DeleteDataSource(self.testdir)
-        
+        self.deletetmp(self.drv, self.testdir, self.shppath)
+
 if __name__ == '__main__':
     import unittest
     unittest.main()
