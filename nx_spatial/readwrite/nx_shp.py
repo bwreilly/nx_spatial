@@ -102,7 +102,7 @@ def write_shp(G, outdir):
 
     Examples
     --------
-    G=nx.write_shp(digraph, '~/shapefiles')
+    nx.write_shp(digraph, '~/shapefiles')
     
     References
     ----------
