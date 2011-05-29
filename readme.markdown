@@ -9,7 +9,7 @@
 	>>> net.nodes()
 	[(1.0, 1.0), (2.0, 2.0), (3.0, 3.0), (0.9, 0.9), (4.0, 2.0)]
 	>>> source = (2.0, 2.0)
-	>>> ns.setdirection(net, source)               ### reset network direction 		based on source
+	>>> ns.setdirection(net, source)               ### reset network direction based on source
 	>>> net.edges()
 	[[(2.0, 2.0), (1.0, 1.0)], [(2.0, 2.0), (3.0, 3.0)], [(0.9, 0.9), (4.0, 2.0)]]
 	>>> ns.write_shp(net, '~\shapefiles')          ### export to shapefiles
@@ -19,9 +19,11 @@
 	$ python setup.py install
 
 OR
+	
 	$ easy_install nx_spatial
 
 OR
+	
 	$ pip install nx_spatial
 
 ### Development Status
