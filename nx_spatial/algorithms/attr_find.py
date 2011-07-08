@@ -1,7 +1,7 @@
 def attr_find(G, nodes=None, **attributes):
     """Find specific nodes based on given attributes. By default searches
     all network nodes.
-    N.find(Id=1, Name='Bob') -> [(6,2)]
+    nx.attr_find(G, Id=1, Name='Bob') -> [(6,2)]
     """
     attrib = attributes
     found = []
