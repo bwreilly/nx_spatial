@@ -58,6 +58,8 @@ def read_shp(path):
     
     def getfieldinfo(lyr, feature, flds):
             f = feature
+            # hack to get around bug in ogr >=1.6
+            f.GetFieldAsDate = f.GetFieldAsDateTime
             return [f.GetField(f.GetFieldIndex(x)) for x in flds]
             
     def addlyr(lyr, fields):
@@ -67,15 +69,14 @@ def read_shp(path):
             g = f.geometry()
             attributes = dict(zip(fields, flddata))
             attributes["ShpName"] = lyr.GetName()
-            if g.GetGeometryType() == 1: #point
+            if g.GetGeometryType() == ogr.wkbPoint:
                 net.add_node((g.GetPoint_2D(0)), attributes)
-            if g.GetGeometryType() == 2: #linestring
+            if g.GetGeometryType() == ogr.wkbLineString:
                 attributes["Wkb"] = g.ExportToWkb()
                 attributes["Wkt"] = g.ExportToWkt()
                 attributes["Json"] = g.ExportToJson()
                 last = g.GetPointCount() - 1
-                net.add_edge(g.GetPoint_2D(0), g.GetPoint_2D(last), attributes)
-                
+                net.add_edge(g.GetPoint_2D(0), g.GetPoint_2D(last), attributes)                
     if isinstance(path, str):
         shp = ogr.Open(path)
         lyrcount = shp.GetLayerCount() #multiple layers indicate a directory
