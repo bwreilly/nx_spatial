@@ -129,6 +129,14 @@ def write_shp(G, outdir):
             geom.SetPoint(0, *key)
         return geom
 
+    def netattributes(lyr, data):
+        items = data.iteritems()
+        attributes = dict([(k,v) for k,v in items if k not in ['Wkb', 'Wkt']])
+        for k,v in attributes:
+            field_defn = ogr.FieldDefn(k, ogr.OFTString)
+            field_defn.SetWidth(32)
+            lyr.CreateField(field_defn)
+
     def create_feature(geometry, lyr):
         feature = ogr.Feature(lyr.GetLayerDefn())
         feature.SetGeometry(g)

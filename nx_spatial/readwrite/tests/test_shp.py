@@ -4,7 +4,7 @@
  
 import os,tempfile
 from nose import SkipTest
-from nose.tools import assert_equal
+from nose.tools import assert_equal, assert_is_not_none
 
 import networkx as nx
 import nx_spatial as nu
@@ -98,7 +98,9 @@ class TestShp(object):
             feature = lyr.GetNextFeature()
             actualvalues = []
             while feature:
-                actualvalues.append(feature.GetGeometryRef().ExportToWkt())
+                name = feature.GetFieldAsString("Name")
+                assert_is_not_none(name, "Field missing in export.")
+                actualvalues.append()
                 feature = lyr.GetNextFeature()
             assert_equal(sorted(expected), sorted(actualvalues))
 
@@ -106,8 +108,8 @@ class TestShp(object):
         G = nu.read_shp(self.shppath)
         nu.write_shp(G, tpath)
         shpdir = ogr.Open(tpath)
-        nodes = shpdir.GetLayerByName("nodes")
-        #testattributes(nodes, )
+        edges = shpdir.GetLayerByName("edges")
+        #testattributes(edges, self.names)        not ready yet
     
     def tearDown(self):
         self.deletetmp(self.drv, self.testdir, self.shppath)
