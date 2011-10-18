@@ -134,7 +134,9 @@ def write_shp(G, outdir):
         feature.SetGeometry(g)
         lyr.CreateFeature(feature)
         feature.Destroy()
-
+    
+    if type(G) is not nx.DiGraph:
+        raise Exception("Input is not a networkx.DiGraph")
     drv = ogr.GetDriverByName("ESRI Shapefile")
     shpdir = drv.CreateDataSource(outdir)
     nodes = shpdir.CreateLayer("nodes", None, ogr.wkbPoint)

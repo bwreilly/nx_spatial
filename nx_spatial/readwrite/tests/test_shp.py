@@ -107,6 +107,7 @@ class TestShp(object):
         nu.write_shp(G, tpath)
         shpdir = ogr.Open(tpath)
         nodes = shpdir.GetLayerByName("nodes")
+        #testattributes(nodes, )
     
     def tearDown(self):
         self.deletetmp(self.drv, self.testdir, self.shppath)
