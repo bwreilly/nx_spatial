@@ -111,6 +111,12 @@ class TestShp(object):
         edges = shpdir.GetLayerByName("edges")
         #testattributes(edges, self.names)        not ready yet
     
+    def test_wkt_export(self):
+        G = nx.DiGraph()
+        tpath = os.path.join(tempfile.gettempdir(),'shpdir')
+        G.add_node(1, Wkt="POINT(1 1)")
+        nu.write_shp(G, tpath)
+
     def tearDown(self):
         self.deletetmp(self.drv, self.testdir, self.shppath)
 

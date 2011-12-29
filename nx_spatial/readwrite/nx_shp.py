@@ -149,8 +149,8 @@ def write_shp(G, outdir):
     shpdir = drv.CreateDataSource(outdir)
     nodes = shpdir.CreateLayer("nodes", None, ogr.wkbPoint)
     for n in G:
-        data = G.node[n].values() or [{}]
-        g = netgeometry(n, data[0])
+        data = G.node[n] or {}
+        g = netgeometry(n, data)
         create_feature(g, nodes)
     edges = shpdir.CreateLayer("edges", None, ogr.wkbLineString)
     for e in G.edges():
