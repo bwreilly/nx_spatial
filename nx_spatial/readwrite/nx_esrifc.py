@@ -19,10 +19,10 @@ __author__ = """Ben Reilly (benwreilly@gmail.com)"""
 __all__ = ['read_fc']
 
 import networkx as nx
-import nx_spatial as nu
+
 
 def read_fc(path, gp):
-    """Generates a networkx.DiGraph from a feature class. 
+    """Generates a networkx.DiGraph from a feature class.
 
     "The ESRI Feature Class is a popular geospatial vector
     data format for geographic information systems software."
@@ -41,16 +41,16 @@ def read_fc(path, gp):
     --------
     G=nu.read_fc('C:\database.gdb\test')
 
-    """    
+    """
     net = nx.DiGraph()
-    
+
     def get_attribs(fields):
             fvals = []
             for field in fields:
                 if field != "Shape":
                     fvals.append(row.GetValue(field))
             return dict(zip(fields, fvals))
-            
+
     cur = gp.SearchCursor(path)
     fields = map(lambda x: x.name, gp.listfields(path))
     row = cur.Next()
@@ -66,9 +66,9 @@ def read_fc(path, gp):
             last = geom.LastPoint
             net.add_edge((first.x, first.y), (last.x, last.y), attributes)
         row = cur.Next()
-    
     return net
-    
+
+
 # fixture for nose tests
 def setup_module(module):
     from nose import SkipTest
