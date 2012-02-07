@@ -12,8 +12,8 @@ def attr_find(G, nodes=None, **attributes):
         keys = filter(lambda a: a in nodes, G.node)
         vals = map(lambda x: G.node[x], nodes)
         nds = zip(keys, vals)
-    for xy,attr in nds: #(x,y): {attributes}
-        if set(attrib).issubset(attr): #has all search keys
+    for xy, attr in nds:  # (x, y): {attributes}
+        if set(attrib).issubset(attr):  # has all search keys
             if all(map(lambda x: attr[x] == attrib[x], attrib.keys())):
                 found.append(xy)
     return list(set(found))
