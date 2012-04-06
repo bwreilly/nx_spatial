@@ -26,15 +26,18 @@ __all__ = ['read_shp', 'write_shp']
 
 import networkx as nx
 
+
 def read_shp(path):
     """ Active development for shp read is now done in networkx. This function left in for compatibilty purposes.
     """
     return nx.read_shp(path)
-    
+
+
 def write_shp(G, outdir):
     """ Active development for shp write is now done in networkx. This function left in for compatibilty purposes.
     """
     nx.write_shp(G, outdir)
+
 
 # fixture for nose tests
 def setup_module(module):

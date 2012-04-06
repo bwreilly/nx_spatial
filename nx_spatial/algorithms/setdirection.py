@@ -21,7 +21,7 @@ def setdirection(G, stopnodes=None, *sources):
             G.remove_edge(*edge)
 
         for src in sources:
-            errs = set(flow_errors(G, ud, src, stopnodes))
+            errs = set(flow_errors(G, src, ud, stopnodes))
             while errs:
                 e = errs.pop()
                 flip(e)
